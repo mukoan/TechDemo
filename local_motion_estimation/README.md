@@ -19,7 +19,7 @@
 - ffmpeg
 - Python with OpenCV and matplotlib packages
 
-Or, you can run everything using the [techdemo docker image](https://github.com/mukoan/Docker).
+You can build this code and run everything using my [techdemo docker image](https://github.com/mukoan/Docker).
 
 ## Instructions
 `make` builds `bma` and `bmc`.

@@ -7,6 +7,8 @@
 - torchvision
 - ffmpeg
 
+You can run these scripts using my [techdemo docker image](https://github.com/mukoan/Docker).
+
 ## Usage
 Estimate dense optical flow between two images using Farneback's method:
 ```
