@@ -47,7 +47,8 @@ def preprocess(img1_batch, img2_batch):
   return transforms(img1_batch, img2_batch)
 
 
-def estimate_optical_flow(current_path, previous_path, output_path):
+def estimate_optical_flow(current_path, previous_path, output_path,
+                          compensate=False):
 
   if not os.path.exists(current_path) or not os.path.exists(previous_path):
     raise FileNotFoundError("One or both images could not be loaded. Check the file paths.")
@@ -69,31 +70,34 @@ def estimate_optical_flow(current_path, previous_path, output_path):
   flow_image = render_image(nflow)
   cv2.imwrite(output_path, flow_image)
 
-  """ Enable this code to generate optical flow compensated image
-      using the previous image:
-  # Compensate previous image using flow
+  if compensate:
+    # Compensate previous image using flow
+    numpy_image = np.transpose(img1[0].numpy(), (1, 2, 0))
+    numpy_image = ((numpy_image + 1) / 2.0) * 255
+    numpy_image = np.clip(numpy_image, 0, 255)
+    numpy_image = numpy_image.astype(np.uint8)
 
-  numpy_image = np.transpose(img1[0].numpy(), (1, 2, 0))
-  numpy_image = ((numpy_image + 1) / 2.0) * 255
-  numpy_image = np.clip(numpy_image, 0, 255)
-  numpy_image = numpy_image.astype(np.uint8)
+    # Convert RGB to BGR for OpenCV
+    numpy_image = cv2.cvtColor(numpy_image, cv2.COLOR_RGB2BGR)
 
-  # Convert RGB to BGR for OpenCV
-  numpy_image = cv2.cvtColor(numpy_image, cv2.COLOR_RGB2BGR)
-
-  compensated_img = compensate_image(numpy_image, nflow)
-  cv2.imwrite("compensated-raft.png", compensated_img)
-  """
+    compensated_img = compensate_image(numpy_image, nflow)
+    compensated_name = f"{previous_path.stem}_compensated{previous_path.suffix}"
+    cv2.imwrite(compensated_name, compensated_img)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(
                       prog='raft-of-single',
                       description='Estimate optical flow by RAFT')
 
-  parser.add_argument("--current", type=Path, help="Current image")
-  parser.add_argument("--previous", type=Path, help="Previous image")
-  parser.add_argument("--output", type=Path, help="Flow field image")
+  parser.add_argument("--current",  type=Path, required=True,
+                      help="Current image")
+  parser.add_argument("--previous", type=Path, required=True,
+                      help="Previous image")
+  parser.add_argument("--output",   type=Path, required=True,
+                      help="Flow field image")
+  parser.add_argument("--compensate", action="store_true",
+                      help="Save the flow compensated image.")
 
   args = parser.parse_args()
 
-  estimate_optical_flow(args.current, args.previous, args.output)
+  estimate_optical_flow(args.current, args.previous, args.output, args.compensate)

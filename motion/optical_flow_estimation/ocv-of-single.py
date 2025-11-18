@@ -12,13 +12,20 @@ from pathlib import Path
 from flowimage import render_image, compensate_image
 
 
-def compute_optical_flow(img2_filename, img1_filename, flowvis_filename):
+def compute_optical_flow(img2_filename, img1_filename, flowvis_filename,
+                         compensate=False):
   if img1_filename is None or img2_filename is None:
     raise FileNotFoundError("One or both images could not be loaded. Check the file paths.")
 
   # Load images
   img1 = cv2.imread(str(img1_filename))
   img2 = cv2.imread(str(img2_filename))
+
+  if img1 is None:
+    raise FileNotFoundError(f"Could not load image {img1_filename}")
+
+  if img2 is None:
+    raise FileNotFoundError(f"Could not load image {img2_filename}")
 
   # Convert to grayscale
   grey1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
@@ -30,7 +37,7 @@ def compute_optical_flow(img2_filename, img1_filename, flowvis_filename):
 
   # Calculate dense optical flow using Farnebäck method
   flow = cv2.calcOpticalFlowFarneback(
-    f2, f1, None,
+    f1, f2, None,
     pyr_scale=0.5,  # pyramid scale (<1 for finer scales)
     levels=3,       # number of pyramid levels
     winsize=15,     # averaging window size
@@ -44,22 +51,26 @@ def compute_optical_flow(img2_filename, img1_filename, flowvis_filename):
   flow_vis = render_image(flow)
   cv2.imwrite(flowvis_filename, flow_vis)
 
-  """ Enable this code to generate optical flow compensated image
-      using the previous image:
-  # Compensate previous image using flow
-  compensated_img = compensate_image(img1, flow)
-  cv2.imwrite("compensated-ocv.png", compensated_img)
-  """
-
+  if compensate:
+    # Compensate previous image using flow
+    compensated_img = compensate_image(img1, flow)
+    compensated_name = f"{img1_filename.stem}_compensated{img1_filename.suffix}"
+    cv2.imwrite(compensated_name, compensated_img)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-                        prog='ocv-of-single',
-                        description='Estimate optical Flow')
+  parser = argparse.ArgumentParser(
+                      prog='ocv-of-single',
+                      description='Estimate optical Flow')
 
-    parser.add_argument("--current", type=Path, help="Current image")
-    parser.add_argument("--previous", type=Path, help="Previous image")
-    parser.add_argument("--output", type=Path, help="Flow field image")
+  parser.add_argument("--current",  type=Path, required=True,
+                      help="Current image")
+  parser.add_argument("--previous", type=Path, required=True,
+                      help="Previous image")
+  parser.add_argument("--output",   type=Path, required=True,
+                      help="Flow field image")
+  parser.add_argument("--compensate", action="store_true",
+                      help="Save the flow compensated image.")
 
-    args = parser.parse_args()
-    compute_optical_flow(args.current, args.previous, args.output)
+  args = parser.parse_args()
+
+  compute_optical_flow(args.current, args.previous, args.output, args.compensate)

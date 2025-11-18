@@ -101,9 +101,13 @@ if __name__ == "__main__":
                       prog='raft-of-sequence',
                       description='Estimate optical flow by RAFT')
 
-  parser.add_argument("--video", type=Path, help="Input video")
-  parser.add_argument("--images", type=Path, help="Extracted images directory")
-  parser.add_argument("--flow", type=Path, help="Flow visualisation images directory")
+  parser.add_argument("--video",  type=Path, required=True,
+                      help="Input video")
+  parser.add_argument("--images", type=Path, required=True,
+                      help="Extracted images directory")
+  parser.add_argument("--flow",   type=Path, required=True,
+                      help="Flow visualisation images directory")
+
   args = parser.parse_args()
 
   # Check if video file exists

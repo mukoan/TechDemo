@@ -12,9 +12,9 @@
   will give unexpected results.
 - Motion vectors are saved as a binary blob. You must make sure to use the
   same block size parameter with both bma and bmc.
-  
+
 ## Dependencies
-- C++ 20
+- C++ 17
 - OpenCV v4
 - ffmpeg
 - Python with OpenCV and matplotlib packages
@@ -42,13 +42,13 @@ Examples:
 
 ```
 # Run 2DFS at block size 8x8
-$ ./bma -c current.png -p previous.png -v motion.mv -b 8
+bma -c current.png -p previous.png -v motion.mv -b 8
 ```
 
 
 ```
 # Run PMVFAST at block size 16x16
-$ ./bma -c current.png -p previous.png -v motion.mv -b 16 -a pmvfast
+bma -c current.png -p previous.png -v motion.mv -b 16 -a pmvfast
 ```
 
 ### Motion Compensation
