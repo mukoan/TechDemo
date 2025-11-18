@@ -9,7 +9,7 @@
 - argparse
 - pathlib
 
-You can run this demo using my [techdemo docker image](https://github.com/mukoan/Docker).
+You can run these scripts using my [techdemo docker image](https://github.com/mukoan/Docker).
 
 ## Usage
 Estimate global translation between two images using phase correlation:
