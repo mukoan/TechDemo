@@ -6,18 +6,17 @@
 .PHONY: all clean
 
 CPP            = g++
-CFLAGS         = -I. -std=c++20 -O3
-INCLUDES      += -I/usr/local/include/opencv4
-LIBS          += -L/usr/local/lib -L/usr/local/cuda/lib64
-OPENCV         = -lopencv_core -lopencv_imgcodecs
+CFLAGS         = -std=c++17 -O3
+INCLUDES      += -I. `pkg-config --cflags opencv4`
+LIBS          += `pkg-config --libs opencv4`
 
 all: bma bmc
 
 bma: bma.cc fullsearch.cc pmvfast.cc subpixel.cc bmsupport.cc
-	$(CPP) $^ -o $@ $(CFLAGS) $(INCLUDES) $(LIBS) $(OPENCV)
+	$(CPP) $^ -o $@ $(CFLAGS) $(INCLUDES) $(LIBS)
 
 bmc: bmc.cc blockcompensate.cc subpixel.cc bmsupport.cc
-	$(CPP) $^ -o $@ $(CFLAGS) $(INCLUDES) $(LIBS) $(OPENCV)
+	$(CPP) $^ -o $@ $(CFLAGS) $(INCLUDES) $(LIBS)
 
 clean:
 	rm -f bma

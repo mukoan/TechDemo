@@ -186,32 +186,22 @@ void large_diamond_search(const cv::Mat &current, const cv::Mat &previous,
     search_mv[7] = centre_mv; search_mv[7][0]--; search_mv[7][1]++; // left-down
     search_mv[8] = centre_mv; search_mv[8][0]--; search_mv[8][1]--; // left-up
 
-    // std::cout << " (L) current vector " << centre_mv << "\n";
-
     // Get SAD for each candidate
 
     for(int cand_no : candidate_pos)
     {
-      // std::cout << " (L) evaluate candidate " << cand_no << "\n";
-
       if(is_valid(ox+search_mv[cand_no][0], oy+search_mv[cand_no][1], blk_size, previous))
       {
         float bdm = SAD(current, previous, ox, oy,
                         ox+search_mv[cand_no][0], oy+search_mv[cand_no][1],
                         blk_size);
 
-        // std::cout << "    sad[" << cand_no << "] = " << bdm << "\n";
         if(bdm < best_sad) {
           best_mv_pos = cand_no;
           best_sad = bdm;
         }
       }
-      // else
-        // std::cout << "    invalid\n";
     }
-
-    // std::cout << "    best sad = " << best_sad << "\n";
-    // std::cout << "    best pos = " << best_mv_pos << "\n";
 
     // Update next candidate search positions
 
@@ -290,33 +280,22 @@ void small_diamond_search(const cv::Mat &current, const cv::Mat &previous,
     search_mv[3] = centre_mv; search_mv[3][1]++;  // down
     search_mv[4] = centre_mv; search_mv[4][0]--;  // left
 
-    // std::cout << " (S) current vector " << centre_mv << "\n";
-
     // Get SAD for each candidate
 
     for(int cand_no : candidate_pos)
     {
-      //std::cout << " (S) evaluate candidate " << cand_no << "\n";
-      // int cand_no = candidate_pos[m];
-
       if(is_valid(ox+search_mv[cand_no][0], oy+search_mv[cand_no][1], blk_size, previous))
       {
         float bdm = SAD(current, previous, ox, oy,
                         ox+search_mv[cand_no][0], oy+search_mv[cand_no][1],
                         blk_size);
 
-        // std::cout << "    sad[" << cand_no << "] = " << bdm << "\n";
         if(bdm < best_sad) {
           best_mv_pos = cand_no;
           best_sad = bdm;
         }
       }
-      // else
-        // std::cout << "    invalid\n";
     }
-
-    // std::cout << "    best sad = " << best_sad << "\n";
-    // std::cout << "    best pos = " << best_mv_pos << "\n";
 
     // Update next candidate search positions
 

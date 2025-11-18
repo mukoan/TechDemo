@@ -18,36 +18,33 @@
 #include "blockcompensate.h"
 #include "bmsupport.h"
 
-using namespace std;
-
 
 // Help user
 void usage(const char *exe)
 {
-  cout << exe << " usage:\n";
-  cout << " -p  previous image filename\n"
-       << " -v  input motion vectors filename\n"
-       << " -b  block size (default = 16)\n"
-       << " -o  output image filename\n"
-       << " -h  help; this message\n";
+  std::cout << exe << " usage:\n";
+  std::cout << " -p  previous image filename\n"
+            << " -v  input motion vectors filename\n"
+            << " -b  block size (default = 16)\n"
+            << " -o  output image filename\n"
+            << " -h  help; this message\n";
 }
 
 int main(int argc, char *argv[])
 {
-  int c;
-
-  string previous_filename, motion_filename;
-  string output_filename;
+  std::string previous_filename, motion_filename;
+  std::string output_filename;
   int blocksize = 16;
 
+  int c;
   while((c = getopt(argc, argv, "p:v:b:o:h")) != -1)
   {
     switch(c) {
-      case 'p': previous_filename = optarg;           break;
-      case 'v': motion_filename   = optarg;           break;
-      case 'b': blocksize         = atoi(optarg);     break;
-      case 'o': output_filename   = optarg;           break;
-      case 'h': usage(argv[0]); return(EXIT_SUCCESS); break;
+      case 'p': previous_filename = optarg;            break;
+      case 'v': motion_filename   = optarg;            break;
+      case 'b': blocksize         = std::stoi(optarg); break;
+      case 'o': output_filename   = optarg;            break;
+      case 'h': usage(argv[0]); return(EXIT_SUCCESS);  break;
     }
   }
 
@@ -56,7 +53,7 @@ int main(int argc, char *argv[])
   if(previous_filename.empty() || motion_filename.empty() ||
      output_filename.empty())
   {
-    cout << "Error: filename was not specified\n";
+    std::cout << "Error: filename was not specified\n";
     return(EXIT_FAILURE);
   }
 
@@ -67,17 +64,18 @@ int main(int argc, char *argv[])
 
   // Load motion vectors
 
-  vector<cv::Vec2f> mv;
+  std::vector<cv::Vec2f> mv;
   if(!load_vectors(motion_filename, mv))
   {
-    cout << "Error: could not load motion vectors\n";
+    std::cout << "Error: could not load motion vectors\n";
     return(EXIT_FAILURE);
   }
 
   // Check motion vectors match dimensions
   if(mv.size() != (previous_img.cols/blocksize)*(previous_img.rows/blocksize))
   {
-    cout << "Error: motion vectors do not match images with the specified block size\n";
+    std::cout << "Error: motion vectors do not match images with the specified "
+              << "block size\n";
     return(EXIT_FAILURE);
   }
 
@@ -91,7 +89,7 @@ int main(int argc, char *argv[])
   {
     // Split into separate colour channels and process individually
 
-    vector<cv::Mat> channels(previous_img.channels());
+    std::vector<cv::Mat> channels(previous_img.channels());
     cv::split(previous_img, channels);
 
     for(int chan = 0; chan < channels.size(); chan++)

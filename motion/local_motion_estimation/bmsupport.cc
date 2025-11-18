@@ -8,7 +8,10 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+
+#if __cplusplus >= 202002L
 #include <span>
+#endif
 
 #include "bmsupport.h"
 
@@ -90,10 +93,18 @@ bool save_vectors(const std::vector<cv::Vec2f> &mv,
   std::ofstream output(output_filename, std::ios_base::binary);
   if(!output) return(false);
 
+#if __cplusplus >= 202002L
   const std::span<const cv::Vec2f> blob = mv;
 
   output.write(reinterpret_cast<const char *>(blob.data()),
                blob.size()*sizeof(cv::Vec2f));
+#else
+  for(size_t i = 0; i < mv.size(); i++)
+  {
+    output.write(reinterpret_cast<const char *>(&mv[i]),
+                 sizeof(cv::Vec2f));
+  }
+#endif
 
   return(static_cast<bool>(output));
 }

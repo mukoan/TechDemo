@@ -10,7 +10,7 @@ import numpy as np
 import argparse
 from pathlib import Path
 
-def overlay_images(previous_path, current_path, x_offset, y_offset, output_path):
+def overlay_images(previous_path, current_path, x_offset, y_offset, show_box, output_path):
     # Read images
     previous = cv2.imread(previous_path, cv2.IMREAD_COLOR)
     current  = cv2.imread(current_path, cv2.IMREAD_UNCHANGED)
@@ -63,6 +63,10 @@ def overlay_images(previous_path, current_path, x_offset, y_offset, output_path)
     expanded = (1.0 - mask) * expanded + mask * current_rgb
     expanded = expanded.astype(np.uint8)
 
+    if show_box:
+      # Draw box around background for visualisation
+      cv2.rectangle(expanded, (bg_x, bg_y), (bg_x + bw - 1, bg_y + bh - 1), (0, 255, 255), 1)
+
     # Save result
     cv2.imwrite(output_path, expanded)
 
@@ -76,7 +80,8 @@ if __name__ == "__main__":
     parser.add_argument("--current", type=Path, help="Current image")
     parser.add_argument("--xoff", type=float, help="x offset")
     parser.add_argument("--yoff", type=float, help="y offset")
+    parser.add_argument("--outline", action=argparse.BooleanOptionalAction, help="Show box around previous image")
     parser.add_argument("--output", type=Path, help="Output image")
 
     args = parser.parse_args()
-    overlay_images(args.previous, args.current, args.xoff, args.yoff, args.output)
+    overlay_images(args.previous, args.current, args.xoff, args.yoff, args.outline, args.output)
