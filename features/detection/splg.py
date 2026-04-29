@@ -70,7 +70,7 @@ def detect_and_match(image0_filename, image1_filename, matches_filename,
 
   # print(f"Matches {len(matches)}")
 
-  axes = viz2d.plot_images([image0, image1], pad=0)
+  viz2d.plot_images([image0, image1], pad=0)
   viz2d.plot_matches(m_kpts0, m_kpts1, color="lime", lw=0.2)
   # viz2d.add_text(0, f'Stop after {matches01["stop"]} layers', fs=20)
   viz2d.save_plot(matches_filename)

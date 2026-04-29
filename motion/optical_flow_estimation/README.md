@@ -37,6 +37,6 @@ previous image.
 
 Estimate dense optical flow for a video sequence using RAFT (requires PyTorch and torchvision):
 ```
-raft-of-sequence.py --video input.mp4 --images extracted_frames --output flow_frames
+raft-of-sequence.py --video input.mp4 --images extracted_frames --flow flow_frames
 ```
 

@@ -6,13 +6,11 @@
 # Date  : 2025.10.01
 # Note  : Based on https://docs.pytorch.org/vision/main/auto_examples/others/plot_optical_flow.html
 
-import numpy as np
 import torch
 import torchvision.transforms.functional as F
 from torchvision.models.optical_flow import Raft_Large_Weights
 from torchvision.models.optical_flow import raft_large
-from torchvision.utils import flow_to_image
-from torchvision.io import decode_image, write_png
+from torchvision.io import decode_image
 import os
 import subprocess
 import argparse

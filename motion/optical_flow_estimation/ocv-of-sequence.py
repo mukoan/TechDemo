@@ -7,8 +7,6 @@
 
 import os
 import subprocess
-from subprocess import PIPE
-import re
 import argparse
 from pathlib import Path
 
