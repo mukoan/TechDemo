@@ -18,7 +18,6 @@ from pathlib import Path
 import cv2
 from flowimage import render_image
 
-
 # If you can, run this example on a GPU, it will be a lot faster.
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -28,9 +27,15 @@ transforms = weights.transforms()
 model = raft_large(weights=Raft_Large_Weights.DEFAULT, progress=False).to(device)
 model = model.eval()
 
-
-# Extract frames from video using ffmpeg
 def extract_images_from_video(video_path, output_dir):
+  """
+  Extract frames from video using ffmpeg
+
+  Params
+    video_path:  path to the input video file
+    output_dir:  path to save frames to
+  """
+
   command = [
       'ffmpeg',
       '-i', video_path,
@@ -40,12 +45,30 @@ def extract_images_from_video(video_path, output_dir):
 
 
 def preprocess(img1_batch, img2_batch):
+  """
+  Preprocess images for RAFT evaluation
+
+  Params
+    img1_batch:
+    img2_batch:
+
+  Return
+    resized and transformed images
+  """
+
   img1_batch = F.resize(img1_batch, size=[520, 960], antialias=False)
   img2_batch = F.resize(img2_batch, size=[520, 960], antialias=False)
   return transforms(img1_batch, img2_batch)
 
 
 def estimate_optical_flow(images_path, output_path):
+  """
+  Estimate optical flow estimation from consecutive image pairs
+
+  Params
+    images_path:  path to input images
+    output_path:  path to save visualisation of optical flow to
+  """
 
   current_index = 2
   previous_index = 1

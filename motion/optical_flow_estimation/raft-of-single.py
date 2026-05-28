@@ -20,7 +20,6 @@ from pathlib import Path
 import cv2
 from flowimage import render_image, compensate_image
 
-
 # If you can, run this example on a GPU, it will be a lot faster.
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -30,18 +29,18 @@ transforms = weights.transforms()
 model = raft_large(weights=Raft_Large_Weights.DEFAULT, progress=False).to(device)
 model = model.eval()
 
-
-# Extract frames from video using ffmpeg
-def extract_images_from_video(video_path, output_dir):
-  command = [
-      'ffmpeg',
-      '-i', video_path,
-      os.path.join(output_dir, 'frame_%05d.png')
-  ]
-  subprocess.run(command, check=True)
-
-
 def preprocess(img1_batch, img2_batch):
+  """
+  Preprocess images for RAFT evaluation
+
+  Params
+    img1_batch:
+    img2_batch:
+
+  Return
+    resized and transformed images
+  """
+
   img1_batch = F.resize(img1_batch, size=[520, 960], antialias=False)
   img2_batch = F.resize(img2_batch, size=[520, 960], antialias=False)
   return transforms(img1_batch, img2_batch)
@@ -49,6 +48,16 @@ def preprocess(img1_batch, img2_batch):
 
 def estimate_optical_flow(current_path, previous_path, output_path,
                           compensate=False):
+  """
+  Compute optical flow between 2 images using RAFT
+
+  Params
+    current_path:  filename of input current image
+    previous_path:  filename of input previous image
+    output_path:  output filename to save visualisation of optical flow to
+    compensate:  flag to enable generating an optical flow compensated image and
+                 saving it
+  """
 
   if not os.path.exists(current_path) or not os.path.exists(previous_path):
     raise FileNotFoundError("One or both images could not be loaded. Check the file paths.")
@@ -83,6 +92,7 @@ def estimate_optical_flow(current_path, previous_path, output_path,
     compensated_img = compensate_image(numpy_image, nflow)
     compensated_name = f"{previous_path.stem}_compensated{previous_path.suffix}"
     cv2.imwrite(compensated_name, compensated_img)
+
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(

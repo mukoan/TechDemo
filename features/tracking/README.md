@@ -41,6 +41,7 @@ Set up the environment,
 cd ~
 git clone https://github.com/facebookresearch/co-tracker.git
 pip install imageio[ffmpeg]
+cd co-tracker
 ```
 
 Usage:

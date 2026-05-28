@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Open evaluation results CSV file and plot.   
-"""
+#
+# File : plotresults.py
+# Brief: Open evaluation results CSV file and plot
 
 import matplotlib.pyplot as plt
 
 def main():
-  # Read CSV file in format "Frame index, PSNR, time taken"
+  """Read CSV file in format 'Frame index, PSNR, time taken' """
+
   with open('evaluation_results.csv', 'r') as f:
     lines = f.readlines()[1:]  # Skip header
     time_taken_list = []
@@ -26,7 +28,7 @@ def main():
   plt.title('Motion Compensation Evaluation')
   plt.legend(loc='upper right')
   plt.grid()
-  plt.show()  
+  plt.show()
 
 
 if __name__ == "__main__":

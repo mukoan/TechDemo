@@ -10,9 +10,15 @@ import subprocess
 import argparse
 from pathlib import Path
 
-
-# Extract frames from video using ffmpeg
 def extract_images_from_video(video_path, output_dir):
+  """
+  Extract frames from video using ffmpeg
+
+  Params
+    video_path:  path to the input video file
+    output_dir:  path to save frames to
+  """
+
   command = [
       'ffmpeg',
       '-i', video_path,
@@ -21,35 +27,50 @@ def extract_images_from_video(video_path, output_dir):
   subprocess.run(command, check=True)
 
 
-# Estimate optical flow estimation from consecutive image pairs
 def estimate_optical_flow(images_path, output_path):
-    current_index = 2
-    previous_index = 1
+  """
+  Estimate optical flow estimation from consecutive image pairs
 
-    while True:
-        print(f'Processing frame {current_index:05d}...')
-        current_image_path = os.path.join(images_path, f'frame_{current_index:05d}.png')
-        previous_image_path = os.path.join(images_path, f'frame_{previous_index:05d}.png')
+  Params
+    images_path:  path to input images
+    output_path:  path to save visualisation of optical flow to
+  """
 
-        if not os.path.exists(current_image_path) or not os.path.exists(previous_image_path):
-          break
+  current_index = 2
+  previous_index = 1
 
-        flow_output_path = os.path.join(output_path, f'flow_{current_index:05d}.png')
+  while True:
+    print(f'Processing frame {current_index:05d}...')
+    current_image_path = os.path.join(images_path, f'frame_{current_index:05d}.png')
+    previous_image_path = os.path.join(images_path, f'frame_{previous_index:05d}.png')
 
-        command = [
-            './ocv-of-single.py',
-            '--current', current_image_path,
-            '--previous', previous_image_path,
-            '--output', flow_output_path
-        ]
-        subprocess.run(command, check=True)
+    if not os.path.exists(current_image_path) or not os.path.exists(previous_image_path):
+      break
 
-        current_index += 1
-        previous_index += 1
+    flow_output_path = os.path.join(output_path, f'flow_{current_index:05d}.png')
+
+    command = [
+        './ocv-of-single.py',
+        '--current', current_image_path,
+        '--previous', previous_image_path,
+        '--output', flow_output_path
+    ]
+    subprocess.run(command, check=True)
+
+    current_index += 1
+    previous_index += 1
 
 
-# Main function to run the process
 def main(video_path, frames_dir, output_dir):
+  """
+  Main function to run the process
+
+  Params
+    video_path:  path to input video
+    frames_dir:  directory to store frames extracted from video
+    output_dir:  directorty to store images visualising optical flow
+  """
+
   print("Extracting images from video...")
   extract_images_from_video(video_path, frames_dir)
 

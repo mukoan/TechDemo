@@ -11,9 +11,20 @@ import argparse
 from pathlib import Path
 from flowimage import render_image, compensate_image
 
-
 def compute_optical_flow(img2_filename, img1_filename, flowvis_filename,
                          compensate=False):
+  """
+  Compute the optical flow between two images, image1 and image2, using
+  Farneback's method
+
+  Params
+    img2_filename:  filename of input image 2
+    img1_filename:  filename of input image 1
+    flowvis_filename:  output filename to save visualisation of optical flow to
+    compensate:  flag to enable generating an optical flow compensated image and
+                 saving it
+  """
+
   if img1_filename is None or img2_filename is None:
     raise FileNotFoundError("One or both images could not be loaded. Check the file paths.")
 
@@ -56,6 +67,7 @@ def compute_optical_flow(img2_filename, img1_filename, flowvis_filename,
     compensated_img = compensate_image(img1, flow)
     compensated_name = f"{img1_filename.stem}_compensated{img1_filename.suffix}"
     cv2.imwrite(compensated_name, compensated_img)
+
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(

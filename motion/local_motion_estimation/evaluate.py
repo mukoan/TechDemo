@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Evaluate motion compensated video frames.
-This script extracts frames from a video file, performs motion compensation
-using block matching, and evaluates the quality of the reconstructed frames
-against the original frames using PSNR.
-"""
+#
+# File : evaluate.py
+# Brief: Evaluate motion compensated video frames
+#
+# This script extracts frames from a video file, performs motion compensation
+# using block matching, and evaluates the quality of the reconstructed frames
+# against the original frames using PSNR.
 
 import os
 import subprocess
@@ -11,9 +13,15 @@ from subprocess import PIPE
 import cv2
 import re
 
-
-# Extract frames from video using ffmpeg
 def extract_images_from_video(video_path, output_dir):
+  """
+  Extract frames from video using ffmpeg
+
+  Params
+    video_path:  path to input vdeo
+    output_dir:  directory to save frames
+  """
+
   command = [
       'ffmpeg',
       '-i', video_path,
@@ -21,8 +29,16 @@ def extract_images_from_video(video_path, output_dir):
   ]
   subprocess.run(command, check=True)
 
-# Evaluate image quality
+
 def evaluate_image_quality(image_path1, image_path2):
+  """
+  Evaluate image quality (PSNR)
+
+  Params
+    image_path1:  path to image to compare
+    image_path2:  path to image to compare
+  """
+
   # Use OpenCV to read images as greyscale
   img1 = cv2.imread(image_path1, cv2.IMREAD_GRAYSCALE)
   img2 = cv2.imread(image_path2, cv2.IMREAD_GRAYSCALE)
@@ -35,8 +51,19 @@ def evaluate_image_quality(image_path1, image_path2):
 
   return psnr_value
 
-# Evaluate motion compensated video frames
+
 def evaluate_memc(images_path, vectors_path, reconstruct_path, method, blocksize=16):
+  """
+  Evaluate motion compensated video frames
+
+  Params
+    images_path:  directory containing video frames
+    vectors_path:  directory to save motion vectors
+    reconstruct_path:  directory to save motion compensated images
+    method:  motion estimation algorithm to use
+    blocksize:  size of blocks (pixels), usually 8 or 16
+  """
+
   # Loop over each consecutive image pair using number in filenames
   current_index = 2
   previous_index = 1
@@ -96,11 +123,22 @@ def evaluate_memc(images_path, vectors_path, reconstruct_path, method, blocksize
     f.write('FrameIndex,PSNR,TimeTakenMicroseconds\n')
     for i in range(len(psnr_list)):
       f.write(f'{i+2},{psnr_list[i]},{time_taken_list[i]}\n')
-  print("Evaluation results saved to evaluation_results.csv")
+    print("Evaluation results saved to evaluation_results.csv")
 
 
-# Main function to run the process
 def main(video_path, frames_dir, vectors_dir, reconstruct_dir, method, blocksize=16):
+  """
+  Main function to run the process
+
+  Params
+    video_path:  path to input video
+    frames_dir:  directory to extract frames from video
+    vectors_dir:  directory to store motion vectors
+    reconstruct_dir:  directory to save motion compensated images
+    method:  motion estimation algorithm to use
+    blocksize:  size of blocks (pixels) for motion estimation
+  """
+
   print("Extracting images from video...")
   extract_images_from_video(video_path, frames_dir)
 

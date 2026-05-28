@@ -1,16 +1,25 @@
 #!/usr/bin/env python3
-"""Find keypoints for all images in sequence and finding consecutive matched
-points between images
-"""
+#
+# File:  workfeatures.py
+# Brief: Run feature detection and matching on a video
+#
+# Find keypoints for all images in sequence and finding consecutive matched
+# points between images. Creates output directories if they do not exist.
 
 import os
 import subprocess
 import argparse
 from pathlib import Path
 
-
-# Extract frames from video using ffmpeg
 def extract_images_from_video(video_path, output_dir):
+  """
+  Extract all frames from video using ffmpeg
+
+  Params
+    video_path:  path to the video file
+    output_dir:  directory to write extracted frames to, as png images
+  """
+
   print("Extracting frames from video...")
   command = [
       'ffmpeg',
@@ -19,8 +28,21 @@ def extract_images_from_video(video_path, output_dir):
   ]
   subprocess.run(command, check=True)
 
-# Detect features and matches
+
 def process(video_path, images_path, output_path, method):
+  """
+  Detect features and matches
+
+  Extract frames from video, detect features and matches using detect-match,
+  writes annotated images.
+
+  Params
+    video_path:  path to input video
+    images_path:  directory to write extracted frames
+    output_path:  directory to write images with keypoints and matches
+    method:  feature detector to use (SIFT, SURF, ORB; - see detect-match)
+  """
+
   # Check if there are images in images_path
   if not os.listdir(images_path):
     extract_images_from_video(video_path, images_path)
@@ -54,6 +76,7 @@ def process(video_path, images_path, output_path, method):
 
     current_index += 1
     previous_index += 1
+
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(

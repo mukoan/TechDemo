@@ -40,7 +40,16 @@ torch.set_grad_enabled(False)
 
 def detect_and_match(image0_filename, image1_filename, matches_filename,
                      keypoints_filename):
-  # SuperPoint+LightGlue
+  """
+  Run SuperPoint+LightGlue for feature detection and matching
+
+  Params
+    image0_filename:  image to detect features
+    image1_filename:  image to detect features
+    matches_filename:  output image annotated with matches
+    keypoints_filename:  output image annotated with keypoints
+  """
+
   extractor = SuperPoint(max_num_keypoints=2000).eval().to(device)
   matcher   = LightGlue(features='superpoint').eval().to(device)
 
@@ -89,7 +98,16 @@ def detect_and_match(image0_filename, image1_filename, matches_filename,
     crop_img = keypoints_img[0:h, int(w/2):w]
     cv2.imwrite(keypoints_filename, crop_img)
 
+
 def main(images_path, output_path):
+  """
+  Runs detection and matching, generates filenames from paths.
+
+  Params
+    images_path:  path to input image directory
+    output_path:  path to output image directory
+  """
+
   if not os.listdir(images_path):
     print(f'No images found in {images_path}')
     return
@@ -117,6 +135,7 @@ def main(images_path, output_path):
 
     current_index += 1
     previous_index += 1
+
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(

@@ -6,9 +6,17 @@
 import cv2
 import numpy as np
 
-
 def render_image(flow):
-  """Render optical flow as a colour image"""
+  """
+  Render optical flow as a colour image
+
+  Params
+    flow:  dense 2D array of flow vectors
+
+  Return
+    visualisation of the optical flow, direction and magnitude as an image
+  """
+
   magnitude, angle = cv2.cartToPolar(flow[..., 0], flow[..., 1])
   hsv = np.zeros((flow.shape[0], flow.shape[1], 3), dtype=np.uint8)
   hsv[..., 1] = 255
@@ -25,7 +33,17 @@ def render_image(flow):
 
 
 def compensate_image(image, flow):
-  """Compensate an image using the provided optical flow"""
+  """
+  Compensate an image using the provided optical flow
+
+  Params
+    image:  input image
+    flow:  dense 2D array of flow vectors
+
+  Return
+    optical flow compensated image
+  """
+
   h, w = flow.shape[:2]
   flow_map = -flow.copy()
   flow_map[..., 0] += np.arange(w)

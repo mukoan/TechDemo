@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
-"""Open evaluation results CSV files and plot comparison.
-"""
+#
+# File : compare_algs.py
+# Brief: Open evaluation results from CSV files and plot comparison
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 def load_csv(filename):
-  # Read CSV file in format "Frame index, PSNR, time taken"
+  """
+  Read CSV file
+
+  Params
+    filename: CSV file in format 'Frame index, PSNR, time taken'
+  """
+
   with open(filename, 'r') as f:
     lines = f.readlines()[1:]  # Skip header
     time_taken_list = []
@@ -18,8 +25,8 @@ def load_csv(filename):
 
     return psnr_list, time_taken_list
 
-def main():
 
+def main():
   psnr_2dfs, time_taken_2dfs = load_csv('results_2dfs.csv')
   psnr_pmvfast, time_taken_pmvfast = load_csv('results_pmvfast.csv')
 

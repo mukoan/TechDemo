@@ -14,7 +14,7 @@
 # - Export models  (TODO not text)
 # - Make sure project.ini file is saved
 #
-# Assumes that COLMAP has been build with CUDA support.
+# Assumes that COLMAP has been built with CUDA support.
 
 PROJECT_DIR=$1
 
