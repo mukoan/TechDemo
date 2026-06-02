@@ -2,6 +2,10 @@
 
 Code supporting this demonstration currently consists of:
 
+- calibration
+  - Intrinsics
+  - Extrinsics
+  - Calibration Validation
 - motion
   - Global Motion Estimation
   - Local Motion Estimation
