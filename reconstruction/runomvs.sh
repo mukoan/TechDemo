@@ -10,7 +10,7 @@
 # sparse reconstruction has been performed.
 # The script makes a dense reconstruction, generating refined and textured
 # (colour) mesh.
-   
+
 
 # Check number of arguments
 if [ "$#" -ne 1 ]; then
@@ -36,6 +36,6 @@ ReconstructMesh project_dense.mvs
 RefineMesh --resolution-level 1 project_dense.mvs -m project_dense_mesh.ply -o project_dense_mesh_refine.mvs
 
 # 5. Texture the mesh (add colour)
-TextureMesh project_dense_refine.mvs -m project_dense_mesh.ply -o project_dense_mesh_refine_texture.mvs
+TextureMesh project_dense.mvs -m project_dense_mesh_refine.ply -o project_dense_mesh_refine_texture.mvs
 
 echo "OpenMVS processing done."

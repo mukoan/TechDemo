@@ -16,7 +16,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 PROJECT_DIR=$1
-cd ${PROJECT_DIR} || { echo "Project directory not found!"; exit 1;
+cd "${PROJECT_DIR}" || { echo "Project directory not found!"; exit 1; }
 
 # Make sure directories have been created dense and dense/images
 mkdir -p dense/images

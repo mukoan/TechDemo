@@ -88,7 +88,7 @@ bool save_rig(const std::string &filename, const std::string &rig_directory,
          << "        ]\n"
          << "      }\n"
          << "    ]\n"
-         << "  },\n"
+         << "  }\n"
          << "]\n";
 
   return(true);

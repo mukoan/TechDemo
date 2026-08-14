@@ -6,13 +6,13 @@ Code supporting this demonstration currently consists of:
   - Intrinsics
   - Extrinsics
   - Calibration Validation
+- features
+  - Detection and Matching
+  - Tracking
 - motion
   - Global Motion Estimation
   - Local Motion Estimation
   - Optical Flow Estimation
-- features
-  - Detection and Matching
-  - Tracking
 - reconstruction
   - 3D Reconstruction
 
