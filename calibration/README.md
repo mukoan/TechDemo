@@ -16,6 +16,7 @@ as possible.
 See my [technical explanation](https://www.lyndonhill.com/techdemo/calibration)
 for examples of using these tools, with images.
 
+
 ## Fisheye Lenses
 For fisheye lenses, including action cameras with fisheye lenses then
 use the `-f` option in the programs. As the model used is different, then
@@ -26,15 +27,18 @@ using the standard model to the fisheye model. The fisheye model is more
 sensitive to points on the edges of the image (where there is more warping) and
 this may increase the error.
 
+
 ## Dependencies
 - OpenCV (libraries and headers for C++, package for Python)
-- FFmpeg, Python 3, argparse, subprocess (video undistorter script)
+- FFmpeg, Python 3, argparse, subprocess (for the video undistorter script)
+
 
 ## Calibration Charts
 These tools support chessboard type charts only. Note that when defining
 the dimensions of the chart by number of corners then you need to ignore the
 outer corners. For example, a chart 10 squares across by 8 squares high will have
 9x7 corners.
+
 
 ## Single Camera Calibration
 To calibrate a single (mono) camera:
@@ -58,6 +62,7 @@ where `image.jpg` is an image taken with the same camera and lens and
 
 In the output image, lines that are straight in the real world that have become
 curved by lens distortion should now be straight again.
+
 
 ## Stereo Camera Calibration
 To calibrate a stereo camera, first calibrate the left and right cameras
@@ -98,6 +103,17 @@ rectify -l left.jpg -r right.jpg -a left_intrinsics.yaml -b right_intrinsics.yam
 This will produce `rectified_l.jpg` and `rectified_r.jpg`. The `-s` option
 can be used to adjust the cropping to remove visible border after
 rectification and should be in the range 0.0 to 1.0.
+
+If you have an extrinsics calibration and need a rig file for COLMAP, `cal2rig`
+will create it from the calibration with the correct formatting:
+```
+cal2rig -c stereo_calibration.yaml -i images -r rig_config.json
+```
+
+The `-i` parameter specifies the path to the rig directory containing
+subdirectories for `left/` and `right/` and those contain the images.
+The path will not be checked by `cal2rig` but it should match up to the
+images paths stored in the COLMAP project database.
 
 
 ## Remove Distortion from Video

@@ -10,7 +10,7 @@ CFLAGS         = -std=c++17 -O3
 INCLUDES      += -I. `pkg-config --cflags opencv4`
 LIBS          += `pkg-config --libs opencv4`
 
-all: calibrate_mono calibrate_stereo calibrate_check dedistort rectify
+all: calibrate_mono calibrate_stereo calibrate_check cal2rig dedistort rectify
 
 calibrate_mono: calibrate_mono.cc calibration_file.cc
 	$(CPP) $^ -o $@ $(CFLAGS) $(INCLUDES) $(LIBS)
@@ -19,6 +19,9 @@ calibrate_stereo: calibrate_stereo.cc calibration_file.cc
 	$(CPP) $^ -o $@ $(CFLAGS) $(INCLUDES) $(LIBS)
 
 calibrate_check: calibrate_check.cc calibration_file.cc
+	$(CPP) $^ -o $@ $(CFLAGS) $(INCLUDES) $(LIBS)
+
+cal2rig: cal2rig.cc calibration_file.cc
 	$(CPP) $^ -o $@ $(CFLAGS) $(INCLUDES) $(LIBS)
 
 dedistort: dedistort.cc calibration_file.cc
@@ -31,6 +34,7 @@ clean:
 	rm -f calibrate_mono
 	rm -f calibrate_stereo
 	rm -f calibrate_check
+	rm -f cal2rig
 	rm -f dedistort
 	rm -f rectify
 	rm -f temp*.jpg
