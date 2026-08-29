@@ -17,7 +17,7 @@ The following packages should be installed:
 
 Additionally FFmpeg must be installed.
 
-### stsync.py
+### `stsync.py`
 
 This is a script designed to synchronise video frames captured from an
 asymmetrical stereo camera made from a GoPro Hero 10 and GoPro
@@ -96,33 +96,6 @@ ffmpeg -i input.mp4 -vf lut3d=lut.cube output.mp4
 ```
 
 
-## Reconstruction
-
-### Dependencies
-The following packages should be installed in a venv:
-- pathlib
-- logging
-- subprocess
-- opencv
-
-### stereo_colmap.py
-
-To run a stereo reconstruction using COLMAP,
-1. Calibrate the camera (intrinsics and extrinsics)
-2. Capture synced stereo video for the reconstruction
-3. Assuming you want to create a project directory called `project`:
- - `mkdir project`
- - `mkdir -p project/images/left`
- - `mkdir -p project/images/right`
-4. Copy the synced images to `project/left` and `project/right`; suggest using `select.sh` to copy every 10th image pair
-5. Copy the `rig_config.json` from extrinsics calibration to the project directory
- - Make sure the paths in the json match
-6. Run the script, as below:
-
-```bash
-stereo_colmap.py --project project --leftcal left_intrinsics.yaml --rightcal right_intrinsics.yaml
-```
-
 ## Encode Stereo Video as MV-HEVC
 
 ### Dependencies
@@ -168,3 +141,35 @@ containing synchronised images
 smaller if cropping is required
 - --output: this should be the output file
 
+
+## Reconstruction
+
+### Dependencies
+The following packages should be installed in a venv:
+- pathlib
+- logging
+- subprocess
+- opencv
+
+### `stereo_colmap.py`
+
+To run a stereo reconstruction using COLMAP,
+1. Calibrate the camera (intrinsics and extrinsics)
+2. Capture synced stereo video for the reconstruction
+3. Assuming you want to create a project directory called `project`:
+ - `mkdir project`
+ - `mkdir -p project/images/left`
+ - `mkdir -p project/images/right`
+4. Copy the synced images to `project/left` and `project/right`; suggest using `select.sh` to copy every 10th image pair
+5. Copy the `rig_config.json` from extrinsics calibration to the project directory
+ - Make sure the paths in the json match
+6. Run the script, as below:
+
+```bash
+stereo_colmap.py --project project --leftcal left_intrinsics.yaml --rightcal right_intrinsics.yaml
+```
+
+### `stereoomvs.sh`
+
+This script prepares a sparse reconstruction for processing with OpenMVS.
+It only depends on COLMAP being in the path.
