@@ -1,0 +1,24 @@
+[
+  {
+    "cameras": [
+      {
+        "image_prefix": "images/left/",
+        "ref_sensor": true
+      },
+      {
+        "image_prefix": "images/right/",
+        "cam_from_rig_rotation": [
+            -0.999944,
+            0.00812011,
+            0.00170437,
+            -0.00652232
+        ],
+        "cam_from_rig_translation": [
+            -71.1738,
+            0.270523,
+            -4.27021
+        ]
+      }
+    ]
+  },
+]
