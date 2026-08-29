@@ -15,6 +15,12 @@ Code supporting this demonstration currently consists of:
   - Optical Flow Estimation
 - reconstruction
   - 3D Reconstruction
+- stereocamera
+  - Synchronisation
+  - Stereo Camera Calibration
+  - Colour Correction
+  - Stereo Video Coding
+  - Metric 3D Reconstruction
 
 
 Code has all been tested on Linux; some knowledge of docker, git, Python and
