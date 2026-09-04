@@ -4,6 +4,16 @@ This repo dir contains files for dealing with files from a stereo camera
 composed of a GoPro Hero 10 and GoPro Hero 3+ Silver. It could easily
 be modified to work with combinations of other camera types.
 
+Please see the [project page](https://www.lyndonhill.com/techdemo/stereocamera.html]) for more details.
+
+## Data Files
+All the examples given at my project page used the following data files with the
+tools in this repo:
+- Hero 10 intrinsics: [`hero10-1080-wide-f.yaml`](https://github.com/mukoan/GoProCalibrations/blob/master/hero10/hero10-1080-wide-f.yaml)
+- Hero 3+ Silver intrinsics:[`hero3-1080-wide-f.yaml`](https://github.com/mukoan/GoProCalibrations/blob/master/hero3/hero3-1080-wide-f.yaml)
+- Extrinsics:[`stereo.yaml`](https://github.com/mukoan/TechDemo/blob/master/stereocamera/data/stereo.yaml) and for your convenience the equivalent [`rig_config.json`](https://github.com/mukoan/TechDemo/blob/master/stereocamera/data/rig_config.json)
+- Colour LUT: [`h3.cube`](https://github.com/mukoan/TechDemo/blob/master/stereocamera/data/h3.cube)
+
 ## Synchronisation
 
 ### Dependencies
