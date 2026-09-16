@@ -6,49 +6,54 @@
 import cv2
 import numpy as np
 
-def render_image(flow):
-  """
-  Render optical flow as a colour image
 
-  Params
-    flow:  dense 2D array of flow vectors
+def render_image(flow: cv2.typing.MatLike) -> cv2.typing.MatLike:
+    """
+    Render optical flow as a colour image
 
-  Return
-    visualisation of the optical flow, direction and magnitude as an image
-  """
+    Params
+      flow:  dense 2D array of flow vectors
 
-  magnitude, angle = cv2.cartToPolar(flow[..., 0], flow[..., 1])
-  hsv = np.zeros((flow.shape[0], flow.shape[1], 3), dtype=np.uint8)
-  hsv[..., 1] = 255
+    Return
+      visualisation of the optical flow, direction and magnitude as an image
+    """
 
-  # Hue = flow direction
-  hsv[..., 0] = angle * 180 / np.pi / 2
+    magnitude, angle = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+    hsv = np.zeros((flow.shape[0], flow.shape[1], 3), dtype=np.uint8)
+    hsv[..., 1] = 255
 
-  # Value = flow magnitude
-  hsv[..., 2] = cv2.normalize(magnitude, None, 0, 255, cv2.NORM_MINMAX)
+    # Hue = flow direction
+    hsv[..., 0] = angle * 180 / np.pi / 2
 
-  flow_image = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+    # Value = flow magnitude
+    hsv[..., 2] = cv2.normalize(magnitude, magnitude, 0, 255, cv2.NORM_MINMAX)
 
-  return flow_image
+    flow_image = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+
+    return flow_image
 
 
-def compensate_image(image, flow):
-  """
-  Compensate an image using the provided optical flow
+def compensate_image(
+    image: cv2.typing.MatLike, flow: cv2.typing.MatLike
+) -> cv2.typing.MatLike:
+    """
+    Compensate an image using the provided optical flow
 
-  Params
-    image:  input image
-    flow:  dense 2D array of flow vectors
+    Params
+      image:  input image
+      flow:  dense 2D array of flow vectors
 
-  Return
-    optical flow compensated image
-  """
+    Return
+      optical flow compensated image
+    """
 
-  h, w = flow.shape[:2]
-  flow_map = -flow.copy()
-  flow_map[..., 0] += np.arange(w)
-  flow_map[..., 1] += np.arange(h)[:, np.newaxis]
+    h, w = flow.shape[:2]
+    flow_map = -flow.copy()
+    flow_map[..., 0] = flow_map[..., 0] + np.arange(w)
+    flow_map[..., 1] = flow_map[..., 1] + np.arange(h)[:, np.newaxis]
 
-  compensated_image = cv2.remap(image, flow_map[..., 0], flow_map[..., 1], interpolation=cv2.INTER_LINEAR)
+    compensated_image = cv2.remap(
+        image, flow_map[..., 0], flow_map[..., 1], interpolation=cv2.INTER_LINEAR
+    )
 
-  return compensated_image
+    return compensated_image

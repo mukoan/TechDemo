@@ -27,120 +27,119 @@ transforms = weights.transforms()
 model = raft_large(weights=Raft_Large_Weights.DEFAULT, progress=False).to(device)
 model = model.eval()
 
-def extract_images_from_video(video_path, output_dir):
-  """
-  Extract frames from video using ffmpeg
 
-  Params
-    video_path:  path to the input video file
-    output_dir:  path to save frames to
-  """
+def extract_images_from_video(video_path: Path, output_dir: Path):
+    """
+    Extract frames from video using ffmpeg
 
-  command = [
-      'ffmpeg',
-      '-i', video_path,
-      os.path.join(output_dir, 'frame_%05d.png')
-  ]
-  subprocess.run(command, check=True)
+    Params
+      video_path:  path to the input video file
+      output_dir:  path to save frames to
+    """
 
-
-def preprocess(img1_batch, img2_batch):
-  """
-  Preprocess images for RAFT evaluation
-
-  Params
-    img1_batch:
-    img2_batch:
-
-  Return
-    resized and transformed images
-  """
-
-  img1_batch = F.resize(img1_batch, size=[520, 960], antialias=False)
-  img2_batch = F.resize(img2_batch, size=[520, 960], antialias=False)
-  return transforms(img1_batch, img2_batch)
+    command = ["ffmpeg",
+               "-i", str(video_path),
+               os.path.join(output_dir, "frame_%05d.png")
+    ]
+    subprocess.run(command, check=True)
 
 
-def estimate_optical_flow(images_path, output_path):
-  """
-  Estimate optical flow estimation from consecutive image pairs
+def preprocess(img1_batch: Path, img2_batch: Path):
+    """
+    Preprocess images for RAFT evaluation
 
-  Params
-    images_path:  path to input images
-    output_path:  path to save visualisation of optical flow to
-  """
+    Params
+      img1_batch:
+      img2_batch:
 
-  current_index = 2
-  previous_index = 1
+    Return
+      resized and transformed images
+    """
 
-  while True:
-    print(f'Processing frame {current_index:05d}...')
-    current_image_path = os.path.join(images_path, f'frame_{current_index:05d}.png')
-    previous_image_path = os.path.join(images_path, f'frame_{previous_index:05d}.png')
-
-    if not os.path.exists(current_image_path) or not os.path.exists(previous_image_path):
-      break
-
-    flow_output_path = os.path.join(output_path, f'flow_{current_index:05d}.png')
-
-    # Load a pair of images
-    img1 = decode_image(previous_image_path)
-    img2 = decode_image(current_image_path)
-
-    img1, img2 = preprocess(img1, img2)
-    img1 = img1.unsqueeze(0)  # (N, C, H, W)
-    img2 = img2.unsqueeze(0)  # (N, C, H, W)
-
-    list_of_flows = model(img1.to(device), img2.to(device))
-    print(f"type = {type(list_of_flows)}")
-    print(f"length = {len(list_of_flows)} = number of iterations of the model")
-
-    predicted_flows = list_of_flows[-1]
-    print(f"dtype = {predicted_flows.dtype}")
-    print(f"shape = {predicted_flows.shape} = (N, 2, H, W)")
-    print(f"min = {predicted_flows.min()}, max = {predicted_flows.max()}")
-
-    # Visualise the predicted flow
-    nflow = predicted_flows[0].permute(1, 2, 0).to("cpu").detach().numpy()
-    flow_image = render_image(nflow)
-    cv2.imwrite(flow_output_path, flow_image)
-
-    current_index += 1
-    previous_index += 1
+    img1_batch = F.resize(img1_batch, size=[520, 960], antialias=False)
+    img2_batch = F.resize(img2_batch, size=[520, 960], antialias=False)
+    return transforms(img1_batch, img2_batch)
 
 
-def main(video_path, frames_dir, output_dir):
-  print("Extracting images from video...")
-  extract_images_from_video(video_path, frames_dir)
+def estimate_optical_flow(images_path: Path, output_path: Path):
+    """
+    Estimate optical flow estimation from consecutive image pairs
 
-  print("Estimating optical flow...")
-  estimate_optical_flow(frames_dir, output_dir)
+    Params
+      images_path:  path to input images
+      output_path:  path to save visualisation of optical flow to
+    """
+
+    current_index = 2
+    previous_index = 1
+
+    while True:
+        print(f"Processing frame {current_index:05d}...")
+        current_image_path = os.path.join(images_path, f"frame_{current_index:05d}.png")
+        previous_image_path = os.path.join(
+            images_path, f"frame_{previous_index:05d}.png"
+        )
+
+        if not os.path.exists(current_image_path) or not os.path.exists(
+            previous_image_path
+        ):
+            break
+
+        flow_output_path = os.path.join(output_path, f"flow_{current_index:05d}.png")
+
+        # Load a pair of images
+        img1 = decode_image(previous_image_path)
+        img2 = decode_image(current_image_path)
+
+        img1, img2 = preprocess(img1, img2)
+        img1 = img1.unsqueeze(0)  # (N, C, H, W)
+        img2 = img2.unsqueeze(0)  # (N, C, H, W)
+
+        list_of_flows = model(img1.to(device), img2.to(device))
+        predicted_flows = list_of_flows[-1]
+
+        # Visualise the predicted flow
+        nflow = predicted_flows[0].permute(1, 2, 0).to("cpu").detach().numpy()
+        flow_image = render_image(nflow)
+        cv2.imwrite(flow_output_path, flow_image)
+
+        current_index += 1
+        previous_index += 1
+
+
+def main(video_path: Path, frames_dir: Path, output_dir: Path):
+    print("Extracting images from video...")
+    extract_images_from_video(video_path, frames_dir)
+
+    print("Estimating optical flow...")
+    estimate_optical_flow(frames_dir, output_dir)
 
 
 if __name__ == "__main__":
-  parser = argparse.ArgumentParser(
-                      prog='raft-of-sequence',
-                      description='Estimate optical flow by RAFT')
+    parser = argparse.ArgumentParser(
+        prog="raft-of-sequence", description="Estimate optical flow by RAFT"
+    )
 
-  parser.add_argument("--video",  type=Path, required=True,
-                      help="Input video")
-  parser.add_argument("--images", type=Path, required=True,
-                      help="Extracted images directory")
-  parser.add_argument("--flow",   type=Path, required=True,
-                      help="Flow visualisation images directory")
+    parser.add_argument("--video", type=Path, required=True, help="Input video")
+    parser.add_argument(
+        "--images", type=Path, required=True, help="Extracted images directory"
+    )
+    parser.add_argument(
+        "--flow", type=Path, required=True, help="Flow visualisation images directory"
+    )
 
-  args = parser.parse_args()
+    args = parser.parse_args()
 
-  # Check if video file exists
-  if not os.path.exists(args.video):
-    raise FileNotFoundError(f"Video file {args.video} not found.")
+    # Check if video file exists
+    if not os.path.exists(args.video):
+        raise FileNotFoundError(f"Video file {args.video} not found.")
 
-  # Make sure extracted images directory exists
-  if not os.path.exists(args.images):
-    os.makedirs(args.images)
+    # Make sure extracted images directory exists
+    if not os.path.exists(args.images):
+        os.makedirs(args.images)
 
-  # Make sure flow images directory exists
-  if not os.path.exists(args.flow):
-    os.makedirs(args.flow)
+    # Make sure flow images directory exists
+    if not os.path.exists(args.flow):
+        os.makedirs(args.flow)
 
-  main(args.video, args.images, args.flow)
+    main(args.video, args.images, args.flow)

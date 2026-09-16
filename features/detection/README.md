@@ -63,6 +63,8 @@ e.g.
 ffmpeg -i video.mp4 path/to/images/frame_%05d.png
 ```
 
+Make sure that the image filenames use the same format, `frame_%05d.png`.
+
 Make a directory to store results,
 
 ```bash
