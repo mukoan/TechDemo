@@ -18,7 +18,12 @@ logging.basicConfig(level=logging.INFO)
 
 
 def process_lut(
-    input_image: cv2.typing.MatLike, lut: colour.LUT3D
+    input_image: cv2.typing.MatLike,
+    lut: colour.LUT1D
+    | colour.LUT3x1D
+    | colour.LUT3D
+    | colour.LUTSequence
+    | colour.LUTOperatorMatrix,
 ) -> cv2.typing.MatLike:
     """
     Apply a LUT to an image using trilinear interpolation
@@ -59,13 +64,17 @@ def process_images(input_dir: Path, lut_path: Path, output_dir: Path):
         if extension == ".jpg" or extension == ".png":
             LOG.info(f"Processing {filename}")
             # Load image
-            input_img = cv2.imread(filename)
+            input_img = cv2.imread(str(filename))
+            if input_img is None:
+                print(f"Failed to load {filename}")
+                continue
+
             input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2RGB)
 
             # Process
             output_float = process_lut(input_img, lut)
             output_img = (np.clip(output_float, 0.0, 1.0) * 255.0).astype(np.uint8)
-            output_img = cv2.cvtColor(output_img, cv2.COLOR_RGB2BGR)
+            output_img = cv2.cvtColor(output_img, cv2.COLOR_RGB2BGR).astype(np.uint8)
 
             # Save
             image_file = Path(filename).name

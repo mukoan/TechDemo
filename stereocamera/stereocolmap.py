@@ -69,7 +69,7 @@ def load_calibration(yaml_path: Path) -> Tuple[cv2.typing.MatLike, cv2.typing.Ma
       camera intrinsic matrix, distortion coefficients
     """
 
-    fs = cv2.FileStorage(yaml_path, cv2.FILE_STORAGE_READ)
+    fs = cv2.FileStorage(str(yaml_path), cv2.FILE_STORAGE_READ)
     camera_matrix = fs.getNode("camera_matrix").mat()
     dist_coeffs = fs.getNode("distortion_coefficients").mat()
     fs.release()

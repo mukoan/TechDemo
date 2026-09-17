@@ -52,8 +52,12 @@ def make_lut(input_dir: Path, output_file: Path):
         right_filename = input_dir / "right" / frame
 
         # Read frames using OpenCV
-        left_image = cv2.imread(left_filename)
-        right_image = cv2.imread(right_filename)
+        left_image = cv2.imread(str(left_filename))
+        right_image = cv2.imread(str(right_filename))
+
+        if left_image is None or right_image is None:
+            print(f"Could not find image pair for left frame={left_filename}")
+            continue
 
         # Work in RGB
         left_image = cv2.cvtColor(left_image, cv2.COLOR_BGR2RGB)
@@ -64,7 +68,7 @@ def make_lut(input_dir: Path, output_file: Path):
         right_image_downsampled = cv2.resize(right_image, (0, 0), fx=0.5, fy=0.5)
 
         # Detect features
-        detector = cv2.SIFT_create()
+        detector = cv2.SIFT_create()  # type: ignore[attr-defined]
         keypoints_left, descriptors_left = detector.detectAndCompute(
             left_image_downsampled, None
         )
@@ -75,7 +79,7 @@ def make_lut(input_dir: Path, output_file: Path):
         # Match descriptors using FLANN-based matcher
         index_params = dict(algorithm=1, trees=5)  # FLANN_INDEX
         search_params = dict(checks=50)
-        flann = cv2.FlannBasedMatcher(index_params, search_params)
+        flann = cv2.FlannBasedMatcher(index_params, search_params)  # type: ignore[arg-type]
         flann_matches = flann.knnMatch(descriptors_left, descriptors_right, k=2)
 
         LOG.info(f"Found {len(flann_matches)} matches for frame {frame}")
@@ -87,15 +91,15 @@ def make_lut(input_dir: Path, output_file: Path):
             if m.distance < 0.7 * n.distance:
                 good_matches.append(m)
 
-        flann_matches = good_matches
-        LOG.info(f"Filtered to {len(flann_matches)} good matches for frame {frame}")
+        filtered_matches = good_matches
+        LOG.info(f"Filtered to {len(filtered_matches)} good matches for frame {frame}")
 
         # Convert downsampled images to float RGB
         left_float = left_image_downsampled.astype(float) / 255.0
         right_float = right_image_downsampled.astype(float) / 255.0
 
         # Find match values and add to table
-        for match in flann_matches:
+        for match in filtered_matches:
             left_idx = match.queryIdx
             right_idx = match.trainIdx
             left_kp = keypoints_left[left_idx]

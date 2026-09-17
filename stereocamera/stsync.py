@@ -154,9 +154,9 @@ def find_offset(raw_left: np.ndarray, raw_right: np.ndarray) -> Tuple[float, flo
     peak_index = np.argmax(correlation)
 
     lag_samples = peak_index - (len(raw_right) - 1)
-    offset = lag_samples / SAMPLE_RATE
+    offset = float(lag_samples / SAMPLE_RATE)
 
-    confidence = np.abs(correlation[peak_index]) / np.mean(np.abs(correlation))
+    confidence = float(np.abs(correlation[peak_index]) / np.mean(np.abs(correlation)))
     return offset, confidence
 
 

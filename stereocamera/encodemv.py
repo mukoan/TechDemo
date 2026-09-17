@@ -46,7 +46,7 @@ def load_intrinsics(yaml_path: Path) -> Tuple[cv2.typing.MatLike, cv2.typing.Mat
       camera intrinsic matrix, distortion coefficients
     """
 
-    fs = cv2.FileStorage(yaml_path, cv2.FILE_STORAGE_READ)
+    fs = cv2.FileStorage(str(yaml_path), cv2.FILE_STORAGE_READ)
     camera_matrix = fs.getNode("camera_matrix").mat()
     dist_coeffs = fs.getNode("distortion_coefficients").mat()
     fs.release()
@@ -68,7 +68,7 @@ def load_extrinsics(yaml_path: Path) -> Tuple[cv2.typing.MatLike, cv2.typing.Mat
       rotation matrix, translation vector
     """
 
-    fs = cv2.FileStorage(yaml_path, cv2.FILE_STORAGE_READ)
+    fs = cv2.FileStorage(str(yaml_path), cv2.FILE_STORAGE_READ)
     rot = fs.getNode("R").mat()
     trans = fs.getNode("T").mat()
     fs.release()
@@ -126,22 +126,14 @@ def make_streams(
     command_left = [
         "ffmpeg",
         "-y",  # Overwrite output file
-        "-f",
-        "rawvideo",
-        "-vcodec",
-        "rawvideo",
-        "-s",
-        f"{width}x{height}",
-        "-pix_fmt",
-        "bgr24",
-        "-r",
-        str(fps),
-        "-i",
-        "-",  # Input from pipe
-        "-pix_fmt",
-        "yuv420p",
-        "-f",
-        "rawvideo",
+        "-f", "rawvideo",
+        "-vcodec", "rawvideo",
+        "-s", f"{width}x{height}",
+        "-pix_fmt", "bgr24",
+        "-r", str(fps),
+        "-i", "-",  # Input from pipe
+        "-pix_fmt", "yuv420p",
+        "-f", "rawvideo",
         "left_view.yuv",
     ]
 
@@ -150,26 +142,22 @@ def make_streams(
     command_right = [
         "ffmpeg",
         "-y",  # Overwrite output file
-        "-f",
-        "rawvideo",
-        "-vcodec",
-        "rawvideo",
-        "-s",
-        f"{width}x{height}",
-        "-pix_fmt",
-        "bgr24",
-        "-r",
-        str(fps),
-        "-i",
-        "-",  # Input from pipe
-        "-pix_fmt",
-        "yuv420p",
-        "-f",
-        "rawvideo",
+        "-f", "rawvideo",
+        "-vcodec", "rawvideo",
+        "-s", f"{width}x{height}",
+        "-pix_fmt", "bgr24",
+        "-r", str(fps),
+        "-i", "-",  # Input from pipe
+        "-pix_fmt", "yuv420p",
+        "-f", "rawvideo",
         "right_view.yuv",
     ]
 
     proc_right = subprocess.Popen(command_right, stdin=subprocess.PIPE)
+
+    # Ensure mypy will be happy with typing
+    assert proc_left.stdin is not None
+    assert proc_right.stdin is not None
 
     # Find all images
     frames_list = []
@@ -188,8 +176,16 @@ def make_streams(
         left_filename = input_dir / "left" / frame
         right_filename = input_dir / "right" / frame
 
-        left_img = cv2.imread(left_filename)
-        right_img = cv2.imread(right_filename)
+        left_img = cv2.imread(str(left_filename))
+        right_img = cv2.imread(str(right_filename))
+
+        if left_img is None:
+            LOG.warning(f"Could not open image {left_filename}, skipping stereo pair")
+            continue
+
+        if right_img is None:
+            LOG.warning(f"Could not open image {right_filename}, skipping stereo pair")
+            continue
 
         left_img_rect = cv2.remap(
             left_img,
@@ -224,22 +220,14 @@ def encode_video(output_file: str):
 
     cmd = [
         bin_x265,
-        "--multiview-config",
-        config_x265,
-        "--fps",
-        str(fps),
-        "--input-res",
-        "1920x1080",
-        "--output",
-        "mvhevc_output.hevc",
-        "--profile",
-        "main",
-        "--colorprim",
-        "bt709",
-        "--transfer",
-        "bt709",
-        "--colormatrix",
-        "bt709",
+        "--multiview-config", config_x265,
+        "--fps", str(fps),
+        "--input-res", "1920x1080",
+        "--output", "mvhevc_output.hevc",
+        "--profile", "main",
+        "--colorprim", "bt709",
+        "--transfer", "bt709",
+        "--colormatrix", "bt709",
     ]
 
     subprocess.run(cmd, check=True)
@@ -274,22 +262,14 @@ def mux_audio(original_audio: Path, offset: float, output_filename: Path):
 
     cmd = [
         bin_ffmpeg8,
-        "-i",
-        "output-gpac.mp4",
-        "-i",
-        str(original_audio),
-        "-filter:a",
-        f"atrim=start={offset},asetpts=PTS-STARTPTS",
-        "-map",
-        "0:v",
-        "-map",
-        "1:a",
-        "-c:v",
-        "copy",
-        "-c:a",
-        "aac",
-        "-tag:v",
-        "hvc1",
+        "-i", "output-gpac.mp4",
+        "-i", str(original_audio),
+        "-filter:a", f"atrim=start={offset},asetpts=PTS-STARTPTS",
+        "-map", "0:v",
+        "-map", "1:a",
+        "-c:v", "copy",
+        "-c:a", "aac",
+        "-tag:v", "hvc1",
         "-shortest",
         str(output_filename),
     ]
