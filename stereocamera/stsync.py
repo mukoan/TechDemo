@@ -238,7 +238,7 @@ def audio_sync(
     new_offset = new_offset_frames / fps
 
     if offset >= 0:
-        LOG.info("Extracting frame from left video; left recording first")
+        LOG.info("Extracting frames from left video; left recording first")
         trim3 = trimleft * (1.0 / fps)
         extract_frames(left, fps, max(0, new_offset - trim3), output / "left")
         LOG.info("Extracting frames from right video")
