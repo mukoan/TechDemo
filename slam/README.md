@@ -1,7 +1,7 @@
 # Sparse Reconstruction using SLAM
 
-This directory contains tools and scripts for running ORBSLAM3 on the
-stereo video obtained from my asymmetrical stereo camera.
+This directory contains tools and scripts for running ORBSLAM3 and
+DROID-SLAM on the stereo video obtained from my asymmetrical stereo camera.
 
 ## Prerequisites
 
@@ -15,8 +15,6 @@ Synchronised images a stereo rig in individual folders for left and right
 images.
 
 ## `create_dataset.py`
-
-pip install tqdm
 
 Converts synchronised images from the stereocamera into a dataset that can
 be used with ORBSLAM3:
