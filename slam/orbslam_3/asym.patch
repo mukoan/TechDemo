@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 25a1fd9..68f8ca7 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -164,6 +164,10 @@ endif()
+ #Stereo examples
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
+ 
++add_executable(stereo_asym
++        Examples/Stereo/stereo_asym.cc)
++target_link_libraries(stereo_asym ${PROJECT_NAME})
++
+ add_executable(stereo_kitti
+         Examples/Stereo/stereo_kitti.cc)
+ target_link_libraries(stereo_kitti ${PROJECT_NAME})

@@ -15,6 +15,9 @@ Code supporting this demonstration currently consists of:
   - Optical Flow Estimation
 - reconstruction
   - 3D Reconstruction
+- slam
+  - ORB-SLAM 3
+  - DROID-SLAM
 - stereocamera
   - Synchronisation
   - Stereo Camera Calibration
