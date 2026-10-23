@@ -3,16 +3,23 @@
 This directory contains tools and scripts for running ORBSLAM3 and
 DROID-SLAM on the stereo video obtained from my asymmetrical stereo camera.
 
+Full details and examples can be found on my
+[project page](https://www.lyndonhill.com/TechDemo/slam.html).
+
 ## Prerequisites
 
 Build my ORBSLAM3 docker image:
-This is patched to compile with C++14, fix a couple of bugs in Settings and
+This uses the community version of ORBSLAM3 because otherwise I had to patch
+it to compile with C++14, fix a couple of bugs in Settings and
 to add an API to save the map as a PLY file.
 You can use this docker image for experimenting with ORBSLAM3; there is nothing
 that makes it only suitable for my stereo camera.
 
-Synchronised images a stereo rig in individual folders for left and right
-images.
+My techdemo docker image. My docker images can be found in my
+[Docker repo](https://github.com/mukoan/Docker).
+
+Synchronised images: a stereo rig with views in individual folders for left and
+right images.
 
 ## `create_dataset.py`
 
@@ -26,20 +33,20 @@ be used with ORBSLAM3:
 
 1. Grab some stereo video
 2. If you are running a camera like my asymmetrical stereo camera then use
-stsync.py to synchronise images; otherwise create a rig folder containing
+`stsync.py` to synchronise images; otherwise create a rig folder containing
 subdirectories named left and right
 3. Run the `create_dataset.py` script
 4. Build my ORBSLAM3 docker image
 5. Run the docker image, making sure that this directory is in the workspace path
-6. Run setup.sh from inside this directory
+6. Run `setup.sh` from inside the `orbslam_3` directory
 7. `cd ~/ORB_SLAM_COMMUNITY/Examples/Stereo`
 8. Run `./stereo_asym ../../Vocabulary/ORBvoc.txt /path/to/dataset/settings.yaml /path/to/dataset /path/to/dataset/timestamps.txt`
 
 ### `setup.sh`
 
 To be run from within my ORBSLAM3 docker image.
-- Copies stereo_asym.cc to /home/user/ORB_SLAM_COMMUNITY/Examples/Stereo
-- Modifies the CMakeLists.txt file using the asym.patch file
+- Copies `stereo_asym.cc` to `/home/user/ORB_SLAM_COMMUNITY/Examples/Stereo`
+- Modifies the `CMakeLists.txt` file using the `asym.patch` file
 - Builds the `stereo_asym` tool
 
 ## Running DROID-SLAM
